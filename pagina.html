@@ -7,7 +7,9 @@
 <style>
 :root{--bg:#eef2f8;--sf:#fff;--ink:#0e1a33;--mut:#5a6681;--line:#d9e0ec;--acc:#1f4fb5;--acc2:#d9482b;--ball:#d8e84a;--ok:#1d8a52;--warn:#b7791f;
 --ouro:#a8740f;--court:#1b3f8f;--on:#fff;--d:'Barlow Condensed',Impact,'Arial Narrow',sans-serif;--b:'Barlow',system-ui,-apple-system,'Segoe UI',sans-serif;color-scheme:light}
-@media (prefers-color-scheme:dark){:root{--bg:#0a1222;--sf:#111c33;--ink:#e7edf9;--mut:#93a0bb;--line:#22314f;--acc:#7ea3ff;--acc2:#ff7a57;--ok:#4fcf8a;--warn:#f0b54a;--court:#132d66;--ouro:#ffd95a;color-scheme:dark}}
+@media (prefers-color-scheme:dark){:root:not([data-tema=claro]){--bg:#0a1222;--sf:#111c33;--ink:#e7edf9;--mut:#93a0bb;--line:#22314f;--acc:#7ea3ff;--acc2:#ff7a57;--ok:#4fcf8a;--warn:#f0b54a;--court:#132d66;--ouro:#ffd95a;color-scheme:dark}}
+:root[data-tema=escuro]{--bg:#0a1222;--sf:#111c33;--ink:#e7edf9;--mut:#93a0bb;--line:#22314f;--acc:#7ea3ff;--acc2:#ff7a57;--ok:#4fcf8a;--warn:#f0b54a;--court:#132d66;--ouro:#ffd95a;color-scheme:dark}
+.tema{position:absolute;bottom:12px;right:max(16px,env(safe-area-inset-right,0px));z-index:2;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.14);color:#fff;border-radius:99px;padding:5px 12px;font:600 13px var(--b);cursor:pointer}
 [hidden]{display:none!important}*{box-sizing:border-box}html,body{margin:0}body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--b);padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 .wrap{max-width:760px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 header{background:var(--court);color:var(--on);position:relative;overflow:hidden}
@@ -34,6 +36,22 @@ h3{font:700 17px var(--d);text-transform:uppercase;letter-spacing:.05em;margin:0
 .btn{font:700 14px var(--b);border-radius:8px;border:1px solid var(--line);background:var(--sf);color:var(--ink);padding:9px 14px;cursor:pointer;text-decoration:none}
 .btn.p{background:var(--acc);border-color:var(--acc);color:#fff}.btn.r{color:var(--acc2)}.btn.r.arm{background:var(--acc2);color:#fff;border-color:var(--acc2)}
 .btn:disabled{opacity:.5;cursor:default}
+.pdia{display:grid;gap:10px}
+.dias{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:8px}
+.dia{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 4px 8px;border:1.5px solid var(--line);border-radius:12px;background:var(--sf);color:var(--ink);cursor:pointer;font:inherit;position:relative;transition:transform .08s}
+.dia:active{transform:scale(.96)}
+.dia .dsem{font-family:var(--d);font-weight:700;font-size:13px;letter-spacing:.08em;color:var(--mut)}
+.dia .dnum{font-family:var(--d);font-weight:800;font-size:21px;line-height:1}
+.dia .dic{font-size:24px;line-height:1.15}
+.dia .dtp{font-weight:700;font-size:14px}
+.dch{font-size:11px;font-weight:600}.dch.ok{color:var(--ok)}.dch.md{color:var(--warn)}.dch.mau{color:var(--acc2)}
+.dia.on{border-color:var(--acc);background:var(--acc);color:#fff;box-shadow:0 4px 12px rgba(31,79,181,.35)}
+.dia.on .dsem,.dia.on .dch{color:#fff}
+.dia.on::after{content:'✓';position:absolute;top:3px;right:7px;font-size:13px;font-weight:800}
+.horas{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.hch{border:1.5px solid var(--line);background:var(--sf);color:var(--ink);border-radius:99px;padding:6px 12px;font:inherit;font-weight:600;cursor:pointer}
+.hch.on{background:var(--ink);color:var(--sf);border-color:var(--ink)}
+.horas input[type=time]{width:auto;padding:5px 8px}
 .btn:focus-visible,input:focus-visible,select:focus-visible,nav button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 input,select{font:500 15px var(--b);padding:9px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);min-width:0;max-width:100%}
 label{display:grid;gap:4px;font-size:13px;color:var(--mut);font-weight:600}
@@ -69,6 +87,7 @@ td.pts{font:800 19px var(--d)}
 tr.corte td{border-bottom:2px solid var(--acc2)}.grp{font:700 11px var(--b);letter-spacing:.06em;text-transform:uppercase;color:var(--acc2)}
 .av{width:22px;height:22px;border-radius:50%;object-fit:cover;vertical-align:-6px;margin-right:6px;background:var(--court)}.avg{width:150px;height:150px;border-radius:50%;object-fit:cover;background:var(--court);border:3px solid var(--ball)}
 .perfil{position:absolute;top:18px;right:max(16px,env(safe-area-inset-right,0px));width:54px;height:54px;border-radius:50%;border:3px solid var(--ball);background:#24509f;color:#fff;font:800 20px var(--d);padding:0;overflow:hidden;cursor:pointer;display:grid;place-items:center}.perfil img{width:100%;height:100%;object-fit:cover;display:block}
+#perfilBtn{width:88px;height:88px;top:12px;border-width:4px;box-shadow:0 4px 14px rgba(0,0,0,.35);background:#fff}
 #gaveta{position:fixed;inset:0;z-index:30}.fundo{position:absolute;inset:0;background:rgba(5,10,25,.55);border:0;width:100%;cursor:pointer}
 .painel{position:absolute;top:0;right:0;bottom:0;width:min(310px,86vw);background:var(--sf);padding:calc(18px + env(safe-area-inset-top,0px)) max(14px,env(safe-area-inset-right,0px)) 24px 14px;display:flex;flex-direction:column;gap:2px;overflow-y:auto;box-shadow:-10px 0 30px rgba(0,0,0,.35)}
 .painel .it{display:block;width:100%;text-align:left;background:none;border:0;padding:12px 12px;border-radius:8px;font:700 16px var(--b);color:var(--ink);cursor:pointer;text-decoration:none}.painel .it.on{background:var(--bg);color:var(--acc)}.painel .it:hover{background:var(--bg)}
@@ -92,6 +111,7 @@ tr.corte td{border-bottom:2px solid var(--acc2)}.grp{font:700 11px var(--b);lett
 .vs-x{font-weight:900;font-size:30px;color:#f6c945;text-shadow:0 3px 10px rgba(0,0,0,.5);letter-spacing:1px}
 .vs-cta{align-self:center;position:relative;background:#f6c945;color:#0e2257;border-radius:999px;padding:8px 18px;font-weight:800;font-size:14px}
 .vs-bar{position:relative}.vs-bl{display:flex;justify-content:space-between;align-items:center;gap:6px;font-weight:800;font-size:15px}.vs-bl span:first-child{color:#7cc4ff}.vs-bl span:last-child{color:#f6c945}.vs-fav{font-weight:600;font-size:12px;opacity:.9;text-align:center;color:#fff}.vs-bt{display:flex;height:12px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.15);margin-top:4px}.vs-bt i{background:#5fb4ff;transition:width .4s}.vs-bt b{background:#f6c945;transition:width .4s}
+.mural{min-width:0;max-width:100%;overflow:hidden}.mural .mcomp,.mural .mq,.mural .mpick,.mural .mfaces,.mural .mfr{min-width:0;max-width:100%}.mural .mfaces,.mural .mfr{overflow-x:auto}.mural .mpt{overflow-wrap:anywhere}
 .mcomp{display:flex;flex-direction:column;gap:8px;margin:10px 0 14px}.mcomp textarea{width:100%;box-sizing:border-box;border-radius:10px;padding:10px;font:inherit;font-size:16px;resize:vertical;background:rgba(127,140,170,.12);color:inherit;border:1px solid #33456b}
 .mq{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}.mq::-webkit-scrollbar{display:none}.mqe{font-size:22px;background:none;border:0;padding:4px;cursor:pointer;flex:0 0 auto}
 .mprev{position:relative;align-self:flex-start}.mprev img{max-width:220px;max-height:220px;border-radius:10px;display:block}.mx{position:absolute;top:-8px;right:-8px;width:28px;height:28px;border-radius:50%;border:0;background:#d9482b;color:#fff;font-weight:800;cursor:pointer;z-index:2}
@@ -154,7 +174,7 @@ tr.zn span{font-weight:600;letter-spacing:0;text-transform:none;color:var(--mut)
 @media (max-width:480px){h1{font-size:38px}.grid2{grid-template-columns:1fr}.hide-s{display:none}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style></head><body>
-<header><div class="wrap"><button class="perfil" id="perfilBtn" hidden aria-label="O meu perfil"></button><button class="perfil" id="menuBtn" hidden aria-label="Menu de gestão">☰</button><div class="logo" id="logo" hidden><img id="logoImg" alt="Dragon Padel Boa Vida"></div><div class="clube" id="clube">Dragon Padel · Boa Vida</div><h1><span id="nomeLiga">Liga Dragon</span><span class="bola"></span></h1><div class="sub" id="sub">A carregar…</div></div></header>
+<script>try{var lt=localStorage.getItem('ld-tema');if(lt)document.documentElement.setAttribute('data-tema',lt)}catch(e){}</script><header><div class="wrap"><button class="tema" id="temaBtn" type="button" aria-label="Mudar entre modo claro e escuro">🌓 Auto</button><button class="perfil" id="perfilBtn" hidden aria-label="O meu perfil: horários, foto, lado e dados" title="O meu perfil"></button><button class="perfil" id="menuBtn" hidden aria-label="Menu de gestão">☰</button><div class="logo" id="logo" hidden><img id="logoImg" alt="Dragon Padel Boa Vida"></div><div class="clube" id="clube">Dragon Padel · Boa Vida</div><h1><span id="nomeLiga">Liga Dragon</span><span class="bola"></span></h1><div class="sub" id="sub">A carregar…</div></div></header>
 <nav><div class="wrap" id="tabs"></div></nav>
 <main><div class="wrap" id="app"><div class="card"><span class="mut">A carregar a liga…</span></div></div></main>
 <div id="toast" hidden></div>
@@ -188,8 +208,15 @@ const fdc=d=>d.slice(8,10)+'/'+d.slice(5,7);
 const sorteada=n=>S.sorteados.includes(n);
 const ausentes=n=>S.ausencias.filter(a=>a.jornada===n).map(a=>a.jogador);
 let tt;function toast(m,e){const t=$('#toast');t.textContent=m;t.className=e?'e':'';t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,3200)}
-async function load(){try{const r=await fetch('/api/estado?t='+encodeURIComponent(T));S=await r.json();if(jor==null)jor=S.atual;render()}catch(e){$('#app').innerHTML='<div class="card">Sem ligação. Tenta outra vez.</div>'}}
-async function acao(o){try{const r=await fetch('/api/acao',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({t:T,...o})});const d=await r.json();if(d.erro){toast(d.erro,1);return false}S=d.estado;abertos={};render();toast(d.msg);return true}catch(e){toast('Sem ligação. Tenta outra vez.',1);return false}}
+function getS(){try{return localStorage.getItem('lds_'+T)||''}catch(_){return ''}}
+const _f0=window.fetch.bind(window);window.fetch=(u,o={})=>{if(typeof u==='string'&&u.startsWith('/api/')){o={...o,headers:{...(o.headers||{}),'x-s':getS(),'x-app':(matchMedia('(display-mode: standalone)').matches||navigator.standalone)?'1':'0'}}}return _f0(u,o)};
+function telaEntrar(d){const modo=d.registo?'reg':(T?'pass':'pub');telaEntrar.modo=modo;const sb=document.getElementById('sub');if(sb)sb.textContent='';
+  $('#app').innerHTML=`<div class="card" style="max-width:460px;margin:0 auto"><h2>${modo==='reg'?'🐉 Cria a tua conta':'🔑 Entrar na Liga Dragon'}</h2><div class="small mut" style="margin-bottom:10px">${modo==='reg'?'Primeira vez na app: confirma o teu nome e o teu número de WhatsApp e cria uma palavra-passe. É com ela que voltas a entrar, neste ou noutro telemóvel.':modo==='pass'?'Por segurança, escreve a tua palavra-passe para entrar neste telemóvel.':'Escreve o teu número de WhatsApp e a tua palavra-passe.'}</div>
+  <form data-form="entrar" class="grid2" style="grid-template-columns:1fr">${modo==='reg'?`<label>Nome<input id="enNome" value="${esc(d.nome||'')}" maxlength="40" autocomplete="name"></label>`:''}${modo==='pass'?`<div><b>${esc(d.nome||'')}</b></div>`:`<label>WhatsApp<input id="enTel" type="tel" inputmode="tel" value="${esc(d.telefone||'')}" placeholder="9xx xxx xxx" autocomplete="tel"></label>`}
+  <label>Palavra-passe<input id="enPass" type="password" autocomplete="${modo==='reg'?'new-password':'current-password'}"></label>${modo==='reg'?'<label>Repete a palavra-passe<input id="enPass2" type="password" autocomplete="new-password"></label>':''}<div><button class="btn p">${modo==='reg'?'Criar conta e entrar':'Entrar'}</button></div></form>
+  ${modo==='reg'?'':'<div class="small mut" style="margin-top:8px">Esqueceste-te da palavra-passe? Pede à organização para a repor.</div>'}</div>`}
+async function load(){try{const r=await fetch('/api/estado?t='+encodeURIComponent(T));const d0=await r.json();if(d0&&(d0.registo||d0.login)){telaEntrar(d0);return}S=d0;if(jor==null)jor=S.atual;render()}catch(e){$('#app').innerHTML='<div class="card">Sem ligação. Tenta outra vez.</div>'}}
+async function acao(o){try{const r=await fetch('/api/acao',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({t:T,...o})});const d=await r.json();if(d.login||d.registo){telaEntrar(d);return false}if(d.erro){toast(d.erro,1);return false}S=d.estado;abertos={};render();toast(d.msg);return true}catch(e){toast('Sem ligação. Tenta outra vez.',1);return false}}
 function render(){
   aplicarCat();
   $('#nomeLiga').textContent=S.cfg.nome;$('#clube').textContent=S.cfg.clube;document.title=S.cfg.nome;
@@ -267,6 +294,33 @@ window.addEventListener('message',e=>{const d=e.data||{};if(!d.cartaz||!d.img)re
 function vCartaz(g){const k=chaveCart(g);const im=cartImg[k];
   if(!im&&!cartPend[k]){cartPend[k]=1;const f=document.createElement('iframe');f.id='cf_'+k;f.src='/cartaz/'+g.id+'?mini=1&k='+encodeURIComponent(k);f.setAttribute('aria-hidden','true');f.tabIndex=-1;f.style.cssText='position:absolute;left:-9999px;top:0;width:540px;height:700px;border:0';document.body.appendChild(f)}
   return `<a href="/cartaz/${g.id}" data-cartk="${k}" style="display:block;margin:2px 0 8px">${im?imgCart(im):'<div class="small mut" style="padding:28px;text-align:center;border:1px dashed var(--line);border-radius:10px">A preparar o cartaz…</div>'}</a>`}
+const diasSel={};
+function vPropor(g,mn,f){carregaTempo();const id=g.id;const multi=!!S.me;
+  if(!diasSel[id])diasSel[id]=g.quando?[g.quando.slice(0,10)]:[];
+  const sel=diasSel[id];const DSn=['DOM','SEG','TER','QUA','QUI','SEX','SÁB'];let cards='';let d=new Date(mn+'T00:00:00Z');const fim=new Date(f+'T00:00:00Z');
+  while(d<=fim){const k=d.toISOString().slice(0,10);let ic='',tp='',pp=null;
+    if(TEMPO&&TEMPO.daily){const j=TEMPO.daily.time.indexOf(k);if(j>=0){ic=WMO(TEMPO.daily.weather_code[j]);tp=Math.round(TEMPO.daily.temperature_2m_max[j])+'°';pp=TEMPO.daily.precipitation_probability_max[j]}}
+    const cr=pp==null?'':pp<30?'ok':pp<60?'md':'mau';
+    cards+=`<button type="button" class="dia${sel.includes(k)?' on':''}" data-dia="${k}" data-jg="${id}" data-multi="${multi?1:0}"><span class="dsem">${DSn[d.getUTCDay()]}</span><span class="dnum">${k.slice(8,10)}/${k.slice(5,7)}</span><span class="dic">${ic||'·'}</span><span class="dtp">${tp}</span>${pp!=null?`<span class="dch ${cr}">💧 ${pp}%</span>`:''}</button>`;d=new Date(d.getTime()+864e5)}
+  const h=g.quando?g.quando.slice(11,16):'19:00';const HS=['17:00','18:00','18:30','19:00','19:30','20:00','20:30','21:00'];
+  return `<form class="pdia" data-form="reagendar" data-id="${id}"><div class="small mut">${multi?'Toca nos dias que te dão jeito. Podes escolher vários.':'Escolhe o dia.'}</div><div class="dias">${cards}</div><input type="hidden" id="rd${id}" value="${sel.join(',')}"><div class="small mut">Hora</div><div class="horas">${HS.map(x=>`<button type="button" class="hch${x===h?' on':''}" data-hch="${x}" data-jg="${id}">${x}</button>`).join('')}<input type="time" id="rh${id}" value="${h}" aria-label="Outra hora"></div><div><button class="btn p" id="pbt${id}">${multi?'📅 Propor '+(sel.length>1?sel.length+' dias':'este dia'):'Gravar'}</button></div></form>`}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-dia],[data-hch]');if(!b)return;e.preventDefault();e.stopPropagation();const id=+b.dataset.jg;
+  if(b.dataset.dia){const k=b.dataset.dia;let s=diasSel[id]||[];if(b.dataset.multi==='1'){s=s.includes(k)?s.filter(x=>x!==k):[...s,k].sort()}else s=[k];diasSel[id]=s;
+    document.querySelectorAll('[data-dia][data-jg="'+id+'"]').forEach(x=>x.classList.toggle('on',s.includes(x.dataset.dia)));const i=document.getElementById('rd'+id);if(i)i.value=s.join(',');const bt=document.getElementById('pbt'+id);if(bt&&b.dataset.multi==='1')bt.textContent='📅 Propor '+(s.length>1?s.length+' dias':'este dia')}
+  else{const x=b.dataset.hch;const i=document.getElementById('rh'+id);if(i)i.value=x;document.querySelectorAll('[data-hch][data-jg="'+id+'"]').forEach(y=>y.classList.toggle('on',y.dataset.hch===x))}},true);
+const TEMAS=['auto','claro','escuro'],TIC={auto:'🌓 Auto',claro:'☀️ Claro',escuro:'🌙 Escuro'},TNM={auto:'Tema automático (igual ao telemóvel)',claro:'Modo claro',escuro:'Modo escuro'};
+function temaAtual(){try{return localStorage.getItem('ld-tema')||'auto'}catch(e){return 'auto'}}
+function aplicaTema(t){const r=document.documentElement;if(t==='auto')delete r.dataset.tema;else r.dataset.tema=t;try{t==='auto'?localStorage.removeItem('ld-tema'):localStorage.setItem('ld-tema',t)}catch(e){}const b=document.getElementById('temaBtn');if(b){b.textContent=TIC[t];b.title=TNM[t]}}
+document.addEventListener('click',e=>{if(!e.target.closest('#temaBtn'))return;const t=TEMAS[(TEMAS.indexOf(temaAtual())+1)%3];aplicaTema(t);toast(TNM[t])});
+aplicaTema(temaAtual());
+let TEMPO=null,tempoPed=0;
+function carregaTempo(){if(tempoPed)return;tempoPed=1;fetch('/api/tempo').then(r=>r.json()).then(d=>{TEMPO=d;if(Object.keys(abertos).some(k=>k.indexOf('hora')===0&&abertos[k]))render()}).catch(()=>{tempoPed=0})}
+const WMO=c=>c===0?'☀️':c<=2?'🌤️':c===3?'☁️':c<=48?'🌫️':c<=57?'🌦️':c<=67?'🌧️':c<=77?'❄️':c<=82?'🌧️':'⛈️';
+function optDias(i,f,sel){carregaTempo();const DSn=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];let o='',d=new Date(i+'T00:00:00Z');const fim=new Date(f+'T00:00:00Z');
+  while(d<=fim){const k=d.toISOString().slice(0,10);let t='';
+    if(TEMPO&&TEMPO.daily){const j=TEMPO.daily.time.indexOf(k);if(j>=0){const pp=TEMPO.daily.precipitation_probability_max[j];t=' · '+WMO(TEMPO.daily.weather_code[j])+' '+Math.round(TEMPO.daily.temperature_2m_max[j])+'°'+(pp!=null?' · 💧'+pp+'%':'')}}
+    o+='<option value="'+k+'"'+(k===sel?' selected':'')+'>'+DSn[d.getUTCDay()]+' '+k.slice(8,10)+'/'+k.slice(5,7)+t+'</option>';d=new Date(d.getTime()+864e5)}
+  return o}
 function cartao(g){
   const ladoA=[g.a1,g.a2],ladoB=[g.b1,g.b2];const meu=S.me&&[...ladoA,...ladoB].includes(S.me.id);
   const meuLado=S.me?(ladoA.includes(S.me.id)?'A':ladoB.includes(S.me.id)?'B':null):null;
@@ -286,7 +340,7 @@ function cartao(g){
   if(abertos['res'+g.id]){const s=wo?[]:(g.sets||'').split(' ').filter(Boolean).map(x=>x.split('-'));
     extra=`<form class="setin" data-form="resultado" data-id="${g.id}">${[0,1,2].map(i=>`<label>Set ${i+1}${i===2?' (se houve)':''}<span class="pair"><input id="s${g.id}a${i}" inputmode="numeric" maxlength="2" value="${s[i]?s[i][0]:''}" aria-label="Set ${i+1} dupla 1"><input id="s${g.id}b${i}" inputmode="numeric" maxlength="2" value="${s[i]?s[i][1]:''}" aria-label="Set ${i+1} dupla 2"></span></label>`).join('')}<button class="btn p">Gravar</button></form><div class="small mut">Primeira caixa: ${esc(nome(g.a1))} &amp; ${esc(nome(g.a2))}. Segunda: ${esc(nome(g.b1))} &amp; ${esc(nome(g.b2))}.</div>`}
   if(abertos['hora'+g.id]){const [i,f]=S.intervalos[g.jornada-1];const mn=S.admin?i:(S.hoje>i?S.hoje:i);
-    extra=`<form class="row" data-form="reagendar" data-id="${g.id}"><input type="date" id="rd${g.id}" min="${mn}" max="${f}" value="${g.quando?g.quando.slice(0,10):mn}"><input type="time" id="rh${g.id}" value="${g.quando?g.quando.slice(11,16):'19:00'}"><button class="btn p">${S.me?'Propor esta hipótese':'Gravar'}</button></form><div class="small mut">${S.me?'Os outros 3 recebem a hipótese e o jogo fica marcado quando os 4 concordarem. Tem de ser':'Combinem no grupo e marquem'} entre ${fd(i)} e ${fd(f)}.</div>`}
+    extra=vPropor(g,mn,f)+`<div class="small mut">${S.me?'Os outros 3 recebem a hipótese e o jogo fica marcado quando os 4 concordarem. Tem de ser':'Combinem no grupo e marquem'} entre ${fd(i)} e ${fd(f)}.</div>`}
   if(abertos['wo'+g.id]){const outros=S.admin&&!meu?[['A',`${esc(nome(g.a1))} &amp; ${esc(nome(g.a2))}`],['B',`${esc(nome(g.b1))} &amp; ${esc(nome(g.b2))}`]]:[[meuLado==='A'?'B':'A','A outra dupla']];
     extra=`<div class="row">${outros.map(([l,t])=>`<button class="btn r" data-armar data-acao="wo" data-id="${g.id}" data-falta="${l}">Faltou: ${t}</button>`).join('')}</div><div class="small mut">Quem falta leva 0 pontos e a dupla presente ganha. A outra dupla pode contestar em 48 h.</div>`}
   if(abertos['tr'+g.id]){const ocup=new Set(S.jogos.filter(x=>x.jornada===g.jornada).flatMap(x=>[x.a1,x.a2,x.b1,x.b2]));
@@ -308,7 +362,7 @@ function slidesJogos(){return jogosSem().map(g=>{const b=boloJ(g);const q=p=>(b.
   const dupla=(x,y,p)=>'<div class="vs-d"><div class="vs-avs">'+avS(x)+avS(y)+'</div><div class="vs-n">'+esc(nome(x))+'<br>'+esc(nome(y))+'</div><span class="vs-odd">paga ×'+q(p)+'</span></div>';
   return '<div class="slide vs-s" data-apj="'+g.id+'" role="button" tabindex="0"><div class="vs-top"><span class="eyebrow">'+(g.quando?qTxt(g.quando)+(g.campo?' · Campo '+esc(g.campo):''):'Jornada '+g.jornada+' · por marcar')+'</span>'+grupoTag(g)+'</div><div class="vs-row">'+dupla(g.a1,g.a2,b.pA)+'<div class="vs-x">VS</div>'+dupla(g.b1,g.b2,b.pB)+'</div>'+barra(b)+'<div class="vs-cta">'+(meu?'🎾 O teu jogo · ver apostas':ab?'🐉 Toca para apostar':'Ver o jogo')+'</div></div>'}).join('')}
 function barra(b){const sA=b.pA-100,sB=b.pB-100,tot=sA+sB;const pa=tot?Math.round(sA*100/tot):50,pb=100-pa;const n=b.a.length;const fav=!tot?'Ainda sem apostas':pa>pb?'⬅ Favorita: dupla 1':pb>pa?'Favorita: dupla 2 ➡':'Apostas empatadas';return '<div class="vs-bar"><div class="vs-bl"><span>'+pa+'%</span><span class="vs-fav">'+fav+(n?' · '+n+' aposta'+(n===1?'':'s'):'')+'</span><span>'+pb+'%</span></div><div class="vs-bt"><i style="width:'+pa+'%"></i><b style="width:'+pb+'%"></b></div></div>'}
-function slidesDots(){const n=jogosSem().length;if(!n)return '';return '<div class="dots" id="dots">'+Array.from({length:n+1},(_,i)=>'<i class="'+(i===slIdx?'on':'')+'"></i>').join('')+'</div>'}
+function slidesDots(){const n=jogosSem().length;if(!n)return '';return '<div class="dots" id="dots">'+Array.from({length:n},(_,i)=>'<i class="'+(i===slIdx?'on':'')+'"></i>').join('')+'</div>'}
 function vApJogo(){if(!apJ)return '';const g=S.jogos.find(x=>x.id===apJ);if(!g)return '';return '<div class="card" id="apJ"><div class="row"><h3>🐉 Apostar neste jogo</h3><span class="sp"></span><button class="btn" data-apjf="1">Fechar</button></div>'+cartao(g)+'</div>'}
 document.addEventListener('click',e=>{const s=e.target.closest('[data-apj]');if(s){apJ=+s.dataset.apj;slPausa=Date.now()+20000;render();setTimeout(()=>{const el=document.getElementById('apJ');if(el)el.scrollIntoView({behavior:'smooth',block:'start'})},80);return}if(e.target.closest('[data-apjf]')){apJ=0;render()}});
 setInterval(()=>{const el=document.getElementById('slides');if(!el||el===slEl)return;slEl=el;if(slIdx>=el.children.length)slIdx=0;el.scrollLeft=slIdx*el.clientWidth},300);
@@ -361,10 +415,7 @@ function vEu(){
     const sd=S.saldos[S.me.id]||{saldo:1000,emJogo:0,ganho:0,n:0,acertos:0};const fm=(S.fotos||[]).find(x=>x.jogador===S.me.id)||{};
     const ladoT={D:'Joga à direita',E:'Joga à esquerda',A:'Joga dos dois lados'}[S.me.lado]||'Lado por escolher';
     const gAt=pend.find(g=>g.jornada===S.atual&&g.criado_por===0);const grupo=gAt?gtxt(gAt):'';const sbM=(S.subidas||[]).filter(x=>x.jogador===S.me.id&&x.jornada===S.atual).pop();
-    h+=`<div class="slides" id="slides"><div class="hero slide"><div class="hero-av">${fm.cari?`<img src="/cari/${S.me.id}?v=${encodeURIComponent(fm.cari)}" alt="A tua caricatura">`:fm.foto?`<img src="/foto/${S.me.id}?t=${T}&v=${fm.fv}" alt="A tua foto">`:`<span>${esc(S.me.nome.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase())}</span>`}</div>
-    <div class="hero-txt"><div class="eyebrow">${esc(S.cfg.nome)}${grupo?' · '+grupo:''}</div><h2 class="hero-nome">${esc(S.me.nome)}</h2>
-    <div class="hero-chips"><span class="chipx niv-c niv-${meNiv}">${NN[meNiv]}</span><span class="chipx">${ladoT}</span>${r&&r.forma.length?`<span>${r.forma.map(x=>`<span class="f ${x}">${x}</span>`).join('')}</span>`:''}</div>
-    <button class="btn p" data-tab="perfil">👤 O meu perfil · horários e foto</button></div></div>${slidesJogos()}</div>${slidesDots()}${vApJogo()}
+    h+=`<div class="slides" id="slides">${slidesJogos()}</div>${slidesDots()}${vApJogo()}
     ${vMeuJogo(pend)}
     ${(S.me.multas||[]).length?`<div class="card mov dn">⚠️ <b>Tens ${S.me.multas.length===1?'uma multa':S.me.multas.length+' multas'} por pagar</b> (custo do campo): ${S.me.multas.map(x=>esc(x.motivo)).join(' · ')}. Fala com a organização.</div>`:''}${sbM?`<div class="card mov ${NIVS.indexOf(sbM.para)<NIVS.indexOf(sbM.de)?'up':'dn'}">${NIVS.indexOf(sbM.para)<NIVS.indexOf(sbM.de)?`⬆️ <b>Subiste para ${NN[sbM.para]}!</b> Agora jogas contra os melhores.`:`⬇️ <b>Desceste para ${NN[sbM.para]}.</b> Ganha os próximos jogos e voltas a subir.`}</div>`:''}
     ${S.hoje<='2026-11-21'?`<div class="card mov up"><b>📢 Regras novas da Liga</b><div class="small" style="margin-top:6px">⏰ Jogo marcado: podes desmarcar <b>sem custos até 12 horas antes</b>. Com menos de 12 horas, ou se faltares, <b>pagas o custo completo do campo</b>. Quem repetir pode ser <b>expulso da liga</b>.<br>⚔️ <b>Desafios:</b> desafia quem quiseres no cartão "Desafiar", mais abaixo. Se aceitar, a app escolhe os parceiros e monta o jogo.</div><div class="row" style="margin-top:8px"><button class="btn" data-tab="regras">Ver todas as regras</button></div></div>`:''}${cartaoNotif()}${vDesRec()}<div class="tiles"><div class="tile"><span>Lugar</span><b>${r&&r.j?(pos+1)+'.º':'—'}</b></div><div class="tile"><span>Pontos</span><b>${r?r.pts:0}</b></div><div class="tile"><span>Vitórias</span><b>${r?r.v:0}<small>/${r?r.j:0}</small></b></div><div class="tile"><span>Saldo</span><b>${r&&r.gg>0?'+':''}${r?r.gg:0}</b></div></div>${vDesafiar()}
@@ -584,10 +635,14 @@ function insHora(s){if(!s)return '';const t=Date.parse(s.replace(' ','T')+(s.len
 function vPainelIns(lista){const l=[...lista].sort((a,b)=>(a.quando||'').localeCompare(b.quando||'')||a.id-b.id);const m=l.filter(x=>x.cat!=='F').length,pc=l.filter(x=>!x.telefone).length,ag=Date.now()-864e5;
   const li=l.map((x,i)=>{const t=x.quando?Date.parse(x.quando.replace(' ','T')+(x.quando.length<=19?'Z':'')):0;const nv=t>ag;return `<li class="${nv?'nv':''}"><span class="insn">${i+1}</span><div class="insd"><b>${esc(x.nome)}</b>${nv?' <span class="insnv">novo</span>':''}<div class="small mut">${x.cat==='F'?'Feminina':'Masculina'} · ${LN[x.lado]||'Sem lado'}${x.foto?' · 📷 foto':''}${x.telefone?'':' · por confirmar'}</div></div><span class="small mut insh">${insHora(x.quando)}<br><button class="btn" data-editarj="${x.id}" style="margin-top:6px;padding:4px 12px">✏️ Editar</button></span></li>`}).reverse().join('');
   return `<div class="card" id="painelIns"><h2>📋 Painel de inscrições</h2><div class="small mut"><b>${l.length}</b> inscritos · ${m} masculina · ${l.length-m} feminina${pc?' · '+pc+' por confirmar':''}. O mais recente aparece em cima, com o número de ordem de inscrição. Atualiza sozinho.</div><ol class="insl">${li||'<li class="mut">Ainda ninguém se inscreveu.</li>'}</ol></div>`}
+function vAppEstado(){const L=S.links;if(!L||!L.jogadores)return '';const js=L.jogadores;const ap=js.filter(p=>p.app),br=js.filter(p=>!p.app&&p.visto),nu=js.filter(p=>!p.visto);
+  const linha=p=>{const url=location.origin+'/j/'+p.token;const msg='Olá '+String(p.nome).split(' ')[0]+'! Instala a app da Liga Dragon 🐉: abre o teu link '+url+' no Chrome (Android: ⋮ › Instalar app) ou no Safari (iPhone: Partilhar ⬆️ › Adicionar ao ecrã principal). Na primeira vez crias a tua palavra-passe. Depois abre sempre pelo ícone do dragão.';
+    return `<div class="row"><span class="sp">${esc(p.nome)}${p.reg?' 🔑':''}<span class="small mut">${p.visto?' · visto '+insHora(p.visto):''}</span></span>${p.telefone?`<a class="btn" target="_blank" rel="noopener" href="https://wa.me/${waNum(p.telefone)}?text=${encodeURIComponent(msg)}">Ajudar</a>`:''}</div>`};
+  return `<div class="card"><h2>📲 Quem tem a app</h2><div class="small mut">Conta a partir de 02/11: cada jogador aparece aqui quando abrir a app. 🔑 = já criou a palavra-passe. "Ajudar" abre o WhatsApp dele com as instruções.</div><h3>✅ App instalada (${ap.length})</h3>${ap.map(linha).join('')||'<div class="small mut">Ninguém ainda.</div>'}<h3>🌐 Só no browser (${br.length})</h3>${br.map(linha).join('')||'<div class="small mut">Ninguém.</div>'}<h3>❌ Ainda não abriu (${nu.length})</h3>${nu.map(linha).join('')||'<div class="small mut">Todos já abriram.</div>'}</div>`}
 function multasAdmin(){const L=S.links||{};const mp=(L.multas||[]).filter(x=>x.estado==='por pagar');if(!mp.length)return '';
   return `<div class="card"><h2>Multas por pagar</h2><div class="small mut">Custo completo do campo, por falta de comparência ou por desmarcar com menos de 12 horas.</div>${mp.map(x=>`<div class="row"><span class="sp"><b>${esc(nome(x.jogador))}</b> · ${esc(x.motivo)} · ${fdc(x.criado.slice(0,10))}</span><button class="btn p" data-acao="multa_paga" data-id="${x.id}">Paga</button><button class="btn r" data-armar data-acao="multa_anular" data-id="${x.id}">Anular</button></div>`).join('')}</div>`}
 function vAdmin(){const L=S.links;const base=location.origin;
-  return `${vPainelIns(insDeS())}${multasAdmin()}<div class="card"><h2>Inscrições</h2><div class="small mut">Envia a cada jogador o seu link. Quem tem o link joga em nome dessa pessoa, por isso manda-o em privado.</div>
+  return `${vPainelIns(insDeS())}${multasAdmin()}${vAppEstado()}<div class="card"><h2>Inscrições</h2><div class="small mut">Envia a cada jogador o seu link. Quem tem o link joga em nome dessa pessoa, por isso manda-o em privado.</div>
   <form class="grid2" data-form="add"><label>Nome<input id="novoNome" placeholder="Nome do jogador"></label><label>Lado${selLado('novoLado','')}</label><label>Categoria${selCat('novoCat','M')}</label><div><button class="btn p">Inscrever</button></div></form>
   ${L.jogadores.map(p=>{const url=base+'/j/'+p.token;const msg=`Olá ${p.nome}! Este é o teu link pessoal da ${S.cfg.nome} (${S.cfg.clube}). Vês o teu jogo da semana, marcas a hora e lanças resultados aqui: ${url}`;
   const l=jg(p.id).lado;
@@ -600,7 +655,7 @@ function vAdmin(){const L=S.links;const base=location.origin;
   <label>Liga${selCat('fc'+p.id,jg(p.id).cat)}</label><label>Idade<input id="fi${p.id}" type="number" inputmode="numeric" value="${esc(p.idade)}"></label>
   <label>Altura (cm)<input id="fal${p.id}" type="number" inputmode="numeric" value="${esc(p.altura)}"></label><label>Peso (kg)<input id="fp${p.id}" type="number" inputmode="numeric" value="${esc(p.peso)}"></label>
   <label>Físico${selFis('ff'+p.id,p.fisico)}</label><span></span>
-  <div class="row"><button class="btn p">Gravar ficha</button><button type="button" class="btn" data-novacarij="${p.id}">🎲 Nova caricatura</button></div></form>`:''}</div>`}).join('')}</div>
+  <div class="row"><button class="btn p">Gravar ficha</button><button type="button" class="btn" data-novacarij="${p.id}">🎲 Nova caricatura</button><button type="button" class="btn r" data-armar data-acao="repor_pass" data-jogador="${p.id}">🔑 Repor palavra-passe</button></div></form>`:''}</div>`}).join('')}</div>
   <div class="card"><h2>Partilhar com o grupo</h2><div class="small mut">Link público, só para consultar classificação e jogos:</div><div class="row"><span class="link sp">${esc(base)}/</span><button class="btn" data-copiar="${esc(base)}/">Copiar</button></div>
   <div class="small mut">O teu link de organizador (guarda-o só para ti):</div><div class="link">${esc(base)}/admin/${esc(L.admin)}</div></div>
   <form class="card" data-form="config"><h2>Definições</h2><div class="grid2">
@@ -643,10 +698,14 @@ document.addEventListener('change',e=>{
   if(e.target.id!=='logoFile')return;const f=e.target.files[0];if(!f)return;const img=new Image();img.onload=()=>{const k=Math.min(1,800/img.width);const c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(img,0,0,c.width,c.height);acao({acao:'logo',dados:c.toDataURL('image/jpeg',.9)})};img.src=URL.createObjectURL(f)});
 document.addEventListener('submit',async e=>{
   e.preventDefault();const f=e.target,k=f.dataset.form,id=+f.dataset.id,v=s=>(document.getElementById(s)||{}).value;const btn=f.querySelector('button');if(btn)btn.disabled=true;
+  if(k==='entrar'){const m=telaEntrar.modo;const p=v('enPass')||'';if(m==='reg'&&p!==v('enPass2')){toast('As palavras-passe não são iguais.',1);if(btn)btn.disabled=false;return}
+    try{const r=await fetch(m==='reg'?'/api/registo':'/api/entrar',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({t:T||'',nome:v('enNome'),telefone:v('enTel'),pass:p})});const d=await r.json();
+      if(d.erro){toast(d.erro,1);if(btn)btn.disabled=false;return}const tk=d.t||T;try{localStorage.setItem('lds_'+tk,d.s)}catch(_){}
+      if(m==='pub'){location.href='/j/'+tk;return}toast(m==='reg'?'Conta criada! Bem-vindo à Liga Dragon 🐉':'Bem-vindo de volta! 🐉');load()}catch(_){toast('Sem ligação. Tenta outra vez.',1);if(btn)btn.disabled=false}return}
   if(k==='chat'){await chatEnviar(id);if(btn&&btn.isConnected)btn.disabled=false;return}
   if(k==='marcar')await acao({acao:'marcar',a1:v('m_a1'),a2:v('m_a2'),b1:v('m_b1'),b2:v('m_b2'),jornada:v('m_j')});
   if(k==='resultado')await acao({acao:'resultado',id,sets:[0,1,2].map(i=>[v(`s${id}a${i}`),v(`s${id}b${i}`)])});
-  if(k==='reagendar')await acao({acao:S.me?'propor':'reagendar',id,quando:v('rd'+id)+'T'+v('rh'+id)});
+  if(k==='reagendar'){const ds=String(v('rd'+id)||'').split(',').filter(Boolean);const hh=v('rh'+id);if(!ds.length){toast('Escolhe pelo menos um dia.',1)}else if(!S.me){await acao({acao:'reagendar',id,quando:ds[0]+'T'+hh})}else{for(const d of ds){const ok=await acao({acao:'propor',id,quando:d+'T'+hh});if(!ok)break}delete diasSel[id]}};
   if(k==='trocar')await acao({acao:'trocar',id,slot:v('ts'+id),entra:v('te'+id)});
   if(k==='apostar')await acao({acao:'apostar',id,lado:v('al'+id),valor:v('av'+id)});
   if(k==='disp')await acao({acao:'disp',slots:[0,1,2].map(i=>({d:+v('dd'+i),h:v('dh'+i)})).filter(s=>s.d&&s.h)});
@@ -667,6 +726,7 @@ if(apFoco)tab='apostas';
 function focarAposta(){if(!apFoco||!S)return;const f=document.querySelector('form[data-form="apostar"][data-id="'+apFoco+'"]');const el=f?(f.closest('.jogo')||f):null;
   if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.style.outline='3px solid #d8e84a';el.style.outlineOffset='3px';apFoco=0}
   else if(!S.me){const a=document.getElementById('app');if(a&&!document.getElementById('apAviso'))a.insertAdjacentHTML('afterbegin','<div class="card" id="apAviso"><b>Para apostar, abre o teu link pessoal da liga.</b><div class="small mut">Se não o tens, pede-o ao organizador. Depois de o abrires uma vez neste telemóvel, os links dos cartazes levam-te direto à aposta.</div></div>');apFoco=0}}
-const _renderLD=render;render=function(){_renderLD.apply(this,arguments);setTimeout(focarAposta,60)};if(apFoco)render.ini=1;
-if(P[0]==='convite')convite();else load();
+const _renderLD=render;render=function(){_renderLD.apply(this,arguments);setTimeout(focarAposta,60)};if(apFoco)render.ini=1;const _renderMur=render;render=function(){_renderMur.apply(this,arguments);try{if(tab==='eu'){const m=document.getElementById('mural');if(m){const cs=[...m.parentElement.children].filter(c=>c!==m&&c.classList.contains('card'));const alvo=cs.find(c=>/jogo desta semana/i.test((c.querySelector('h2')||{}).textContent||''))||cs[0];if(alvo&&alvo.nextElementSibling!==m)alvo.after(m)}}}catch(_){}};render.ini=_renderMur.ini;
+
+if(P[0]==='convite')convite();else if(P[0]==='entrar')telaEntrar({});else load();
 </script></body></html>
