@@ -57,7 +57,7 @@ function chapa(x0,y0,w,h,cor1,cor2,n1,n2,al){
   const S=await (await fetch('/api/estado')).json();let g=S.jogos.find(j=>j.id===id);if(JH){const h=(S.jhoje||[]).find(z=>z.id===JH);if(h){const ac=(h.conv||[]).filter(z=>z.p==='adv'&&z.e==='aceite').map(z=>z.j);g=(h.jogo&&S.jogos.find(j=>j.id===h.jogo))||{id:0,jh:JH,jornada:S.atual,a1:h.por,a2:h.parceiro,b1:ac[0]||0,b2:ac[1]||0,quando:(h.dia||S.hoje)+'T'+h.hora,criado_por:-3}}}
   if(!g){document.getElementById('msg').textContent='Jogo não encontrado.';return}
   try{await Promise.all(["italic 900 80px 'Barlow Condensed'","italic 800 60px 'Barlow Condensed'","800 40px 'Barlow Condensed'","700 30px 'Barlow'"].map(f=>document.fonts.load(f)));await document.fonts.load("800 40px 'Barlow Condensed'");await document.fonts.ready}catch(e){}
-  const nome=i=>(S.jogadores.find(p=>p.id===i)||{nome:'??'}).nome;const XT=g.criado_por===-3?'hoje':g.criado_por===-2?'des':'';
+  const nome=i=>(S.jogadores.find(p=>p.id===i)||{nome:'??'}).nome;const XT=g.criado_por===-3?'hoje':g.criado_por===-2?'des':'';const RES=!!(g.sets&&g.vencedor&&g.estado!=='por marcar'&&g.estado!=='marcado');
   const cari=i=>{const f=(S.fotos||[]).find(z=>z.jogador===i);return f&&f.cari?carregar('/cari/'+i+'?v='+f.cari):Promise.resolve(null)};
   const [logo,fundo,...im]=await Promise.all([S.cfg.logo?carregar('/logo?v='+S.cfg.logo):null,carregar('/cartaz-fundo.png'),cari(g.a1),cari(g.a2),cari(g.b1),cari(g.b2)]);
   const rc=im.map(i=>i?recorte(i):null);
@@ -73,25 +73,27 @@ function chapa(x0,y0,w,h,cor1,cor2,n1,n2,al){
     x.textAlign='right';fit(dd,W/2-gx-30,58,900,1);x.fillText(dd,W/2-gx,88);x.textAlign='left';fit(hh,W/2-gx-30,58,900,1);x.fillText(hh,W/2+gx,88);x.restore();
     if(!logo)y+=40}
   x.textAlign='center';x.textBaseline='alphabetic';x.fillStyle='#d8e84a';x.font="700 30px 'Barlow',sans-serif";
-  x.fillText(XT?(g.jh?'🔥 QUEREM JOGAR HOJE · A IA PROCURA ADVERSÁRIOS':XT==='hoje'?'🔥 JOGO DE HOJE · COMBATE EXTRA':'⚔️ DESAFIO · COMBATE EXTRA'):((ct==='F'?'FEMININO · ':'')+(NNk[nv]?NNk[nv]+' · ':'')+'JORNADA '+g.jornada).toUpperCase(),W/2,y+28);
-  x.save();x.fillStyle='#fff';x.shadowColor='rgba(216,232,74,.7)';x.shadowBlur=24;const tt=g.jh?'QUEM ACEITA?':XT==='hoje'?'JOGO DE HOJE':XT==='des'?'DESAFIO':grupo?'COMBATE '+grupo:'COMBATE';fit(tt,W-200,96,900,1);x.fillText(tt,W/2,y+120);x.restore();
+  x.fillText(RES?((XT?'JOGO EXTRA':'JORNADA '+g.jornada)+' · COMBATE TERMINADO'):XT?(g.jh?'🔥 QUEREM JOGAR HOJE · A IA PROCURA ADVERSÁRIOS':XT==='hoje'?'🔥 JOGO DE HOJE · COMBATE EXTRA':'⚔️ DESAFIO · COMBATE EXTRA'):((ct==='F'?'FEMININO · ':'')+(NNk[nv]?NNk[nv]+' · ':'')+'JORNADA '+g.jornada).toUpperCase(),W/2,y+28);
+  x.save();x.fillStyle='#fff';x.shadowColor='rgba(216,232,74,.7)';x.shadowBlur=24;const tt=RES?'RESULTADO':g.jh?'QUEM ACEITA?':XT==='hoje'?'JOGO DE HOJE':XT==='des'?'DESAFIO':grupo?'COMBATE '+grupo:'COMBATE';fit(tt,W-200,96,900,1);x.fillText(tt,W/2,y+120);x.restore();
   const base=1035,alt=580,lg=290;
   figura(rc[1],380,base-20,alt-40,lg,'rgba(40,120,255,.95)',false,nome(g.a2));figura(rc[0],175,base,alt,lg,'rgba(40,120,255,.95)',false,nome(g.a1));
   figura(rc[3],700,base-20,alt-40,lg,'rgba(255,40,50,.95)',false,nome(g.b2));figura(rc[2],905,base,alt,lg,'rgba(255,40,50,.95)',false,nome(g.b1));
-  x.save();x.textAlign='center';x.textBaseline='middle';x.font=`italic 900 200px ${FC}`;x.lineJoin='round';
-  x.shadowColor='rgba(255,255,255,.9)';x.shadowBlur=40;x.lineWidth=16;x.strokeStyle='#0a1222';x.strokeText('VS',W/2,400);x.shadowBlur=0;
-  const vg=x.createLinearGradient(W/2-120,0,W/2+120,0);vg.addColorStop(0,'#5aa0ff');vg.addColorStop(.5,'#ffffff');vg.addColorStop(1,'#ff5a5a');x.fillStyle=vg;x.fillText('VS',W/2,400);
-  x.lineWidth=4;x.strokeStyle='#d8e84a';x.strokeText('VS',W/2,400);x.restore();
+  x.save();x.textAlign='center';x.textBaseline='middle';const VSX=RES?String(g.sets).replace(/ /g,'  '):'VS';x.font=`italic 900 200px ${FC}`;if(RES)fit(VSX,W-140,170,900,1);x.lineJoin='round';
+  x.shadowColor='rgba(255,255,255,.9)';x.shadowBlur=40;x.lineWidth=16;x.strokeStyle='#0a1222';x.strokeText(VSX,W/2,400);x.shadowBlur=0;
+  const vg=x.createLinearGradient(W/2-120,0,W/2+120,0);vg.addColorStop(0,'#5aa0ff');vg.addColorStop(.5,'#ffffff');vg.addColorStop(1,'#ff5a5a');x.fillStyle=vg;x.fillText(VSX,W/2,400);
+  x.lineWidth=4;x.strokeStyle='#d8e84a';x.strokeText(VSX,W/2,400);x.restore();
+  if(RES){x.save();x.fillStyle='rgba(0,0,0,.55)';if(g.vencedor==='A')x.fillRect(W/2,470,W/2,565);else x.fillRect(0,470,W/2,565);x.restore()}
   chapa(30,1035,505,140,'#0b3fbf','#1e7bff',nome(g.a1),nome(g.a2));chapa(545,1035,505,140,'#d01422','#ff4b3a',nome(g.b1),nome(g.b2));
+  if(RES){const bx=g.vencedor==='A'?282:797;x.save();x.shadowColor='rgba(255,210,63,.9)';x.shadowBlur=25;x.fillStyle='#ffd23f';x.beginPath();x.roundRect?x.roundRect(bx-160,992,320,56,28):x.rect(bx-160,992,320,56);x.fill();x.shadowBlur=0;x.fillStyle='#0a1222';x.textAlign='center';x.textBaseline='middle';x.font=`italic 900 38px ${FC}`;x.fillText('VENCEDORES',bx,1021);x.restore()}
   const iv=(S.intervalos||[])[g.jornada-1];const dm=d=>d.slice(8,10)+'/'+d.slice(5,7);
-  const link=g.jh?location.host:location.host+'/aposta/'+g.id;const QS=150,qx=W-40-QS,qy=1188;
-  if(window.qrcode){const qr=qrcode(0,'M');qr.addData(g.jh?location.origin+'/':location.origin+'/aposta/'+g.id);qr.make();const n=qr.getModuleCount(),m=(QS-16)/n;
+  const link=(g.jh||RES)?location.host:location.host+'/aposta/'+g.id;const QS=150,qx=W-40-QS,qy=1188;
+  if(window.qrcode){const qr=qrcode(0,'M');qr.addData((g.jh||RES)?location.origin+'/':location.origin+'/aposta/'+g.id);qr.make();const n=qr.getModuleCount(),m=(QS-16)/n;
     x.fillStyle='#fff';x.beginPath();x.roundRect?x.roundRect(qx,qy,QS,QS,12):x.rect(qx,qy,QS,QS);x.fill();x.fillStyle='#0a1222';
     for(let r=0;r<n;r++)for(let k=0;k<n;k++)if(qr.isDark(r,k))x.fillRect(qx+8+k*m,qy+8+r*m,Math.ceil(m),Math.ceil(m))}
   x.textAlign='left';x.fillStyle='#fff';const tx=50,tw=qx-tx-24;
-  const q=XT&&g.quando?(g.quando.slice(0,10)===S.hoje?'HOJE':DS[new Date(g.quando.slice(0,10)+'T00:00:00Z').getUTCDay()])+' ÀS '+g.quando.slice(11,16):iv?'SEMANA DE '+dm(iv[0])+' A '+dm(iv[1]):'JORNADA '+g.jornada;fit(q,tw,54,800);x.fillText(q,tx,1236);
-  x.fillStyle='#b8c2d8';x.font="700 25px 'Barlow',sans-serif";x.fillText(g.jh?'FALTAM ADVERSÁRIOS · ACEITA NA APP':g.quando?'JOGO MARCADO · VENHAM ASSISTIR':'COMBINEM O DIA E A HORA DO JOGO',tx,1274);
-  x.fillStyle='#d8e84a';const AP=g.jh?'ACEITO O DESAFIO!':'APOSTA NESTE COMBATE';fit(AP,tw,40,800,1);x.fillText(AP,tx,1316);
+  const q=RES?'RESULTADO CONFIRMADO':XT&&g.quando?(g.quando.slice(0,10)===S.hoje?'HOJE':DS[new Date(g.quando.slice(0,10)+'T00:00:00Z').getUTCDay()])+' ÀS '+g.quando.slice(11,16):iv?'SEMANA DE '+dm(iv[0])+' A '+dm(iv[1]):'JORNADA '+g.jornada;fit(q,tw,54,800);x.fillText(q,tx,1236);
+  x.fillStyle='#b8c2d8';x.font="700 25px 'Barlow',sans-serif";x.fillText(RES?'VÊ A CLASSIFICAÇÃO E AS APOSTAS NA APP':g.jh?'FALTAM ADVERSÁRIOS · ACEITA NA APP':g.quando?'JOGO MARCADO · VENHAM ASSISTIR':'COMBINEM O DIA E A HORA DO JOGO',tx,1274);
+  x.fillStyle='#d8e84a';const AP=RES?'PARABÉNS AOS VENCEDORES!':g.jh?'ACEITO O DESAFIO!':'APOSTA NESTE COMBATE';fit(AP,tw,40,800,1);x.fillText(AP,tx,1316);
   x.fillStyle='#fff';x.font="700 22px 'Barlow',sans-serif";x.fillText(link,tx,1340);x.textAlign='center';
   const nomeF=g.jh?'cartaz-quero-jogar-hoje-'+JH+'.png':'cartaz-jornada'+g.jornada+'-jogo'+g.id+'.png';
   document.getElementById('msg').textContent=im.some(i=>!i)?'Quem ainda não tem caricatura aparece com as iniciais.':'Pronto a partilhar.';
