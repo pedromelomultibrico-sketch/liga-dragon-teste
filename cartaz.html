@@ -1,0 +1,96 @@
+<!doctype html><html lang="pt"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Cartaz · Liga Dragon</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,800;1,900&family=Barlow:wght@500;700&display=swap" rel="stylesheet">
+<style>
+[hidden]{display:none!important}*{box-sizing:border-box}html,body{margin:0}
+body{background:#0a1222;color:#e7edf9;font:15px/1.5 'Barlow',system-ui,sans-serif;padding:16px max(16px,env(safe-area-inset-left,0px)) 40px max(16px,env(safe-area-inset-right,0px))}
+.w{max-width:540px;margin:0 auto;display:grid;gap:14px}
+canvas{width:100%;height:auto;border-radius:10px;display:block;background:#05070d}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.btn{font:700 15px 'Barlow',sans-serif;border-radius:8px;border:1px solid #33456b;background:#111c33;color:#e7edf9;padding:11px 16px;cursor:pointer;text-decoration:none}
+.btn.p{background:#d9482b;border-color:#d9482b;color:#fff}
+.m{color:#93a0bb;font-size:13px}
+.mini{padding:0!important;background:transparent}.mini .row,.mini #msg{display:none}.mini .w{max-width:none;gap:0}.mini canvas{border-radius:0}
+</style></head><body><div class="w">
+<canvas id="c" width="1080" height="1350" aria-label="Cartaz do jogo"></canvas>
+<div class="row"><button class="btn p" id="desc">Descarregar imagem</button><button class="btn" id="part" hidden>Partilhar</button><a class="btn" id="volta" href="/">Voltar à liga</a></div>
+<div class="m" id="msg">A preparar o cartaz…</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>
+if(new URLSearchParams(location.search).get('mini'))document.body.classList.add('mini');
+const id=+location.pathname.split('/')[2];const c=document.getElementById('c'),x=c.getContext('2d');const W=1080,H=1350;
+const DS=['DOMINGO','SEGUNDA','TERÇA','QUARTA','QUINTA','SEXTA','SÁBADO'];
+const FC="'Barlow Condensed',Impact,sans-serif";
+const carregar=src=>new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src});
+function fit(t,max,size,peso,it){let s=size;const f=()=>x.font=`${it?'italic ':''}${peso||800} ${s}px ${FC}`;f();while(x.measureText(t).width>max&&s>18){s-=2;f()}return s}
+function recorte(img){const N=600,k=N/Math.max(img.width,img.height),w=Math.round(img.width*k),h=Math.round(img.height*k);
+  const o=document.createElement('canvas');o.width=w;o.height=h;const q=o.getContext('2d');q.drawImage(img,0,0,w,h);const d=q.getImageData(0,0,w,h),p=d.data;
+  const br=i=>p[i]>228&&p[i+1]>228&&p[i+2]>228;const vis=new Uint8Array(w*h);const st=[];
+  for(let i=0;i<w;i++){st.push(i,(h-1)*w+i)}for(let j=0;j<h;j++){st.push(j*w,j*w+w-1)}
+  while(st.length){const n=st.pop();if(vis[n])continue;if(!br(n*4))continue;vis[n]=1;p[n*4+3]=0;const cx=n%w,cy=(n/w)|0;
+    if(cx>0)st.push(n-1);if(cx<w-1)st.push(n+1);if(cy>0)st.push(n-w);if(cy<h-1)st.push(n+w)}
+  for(let n=0;n<w*h;n++){if(vis[n])continue;const cx=n%w,cy=(n/w)|0;let v=0;if(cx>0&&vis[n-1])v++;if(cx<w-1&&vis[n+1])v++;if(cy>0&&vis[n-w])v++;if(cy<h-1&&vis[n+w])v++;
+    if(v){const i=n*4,m=Math.min(p[i],p[i+1],p[i+2]);if(m>170)p[i+3]=Math.round(255*(1-(m-170)/85)*.9)}}
+  let x0=w,y0=h,x1=0,y1=0;for(let n=0;n<w*h;n++){if(p[n*4+3]>20){const cx=n%w,cy=(n/w)|0;if(cx<x0)x0=cx;if(cx>x1)x1=cx;if(cy<y0)y0=cy;if(cy>y1)y1=cy}}
+  q.putImageData(d,0,0);if(x1<=x0)return null;const r=document.createElement('canvas');r.width=x1-x0+1;r.height=y1-y0+1;r.getContext('2d').drawImage(o,-x0,-y0);return r}
+function figura(cv,cx,base,alt,larg,cor,espelho,nome){
+  if(!cv){x.save();x.fillStyle=cor;x.shadowColor=cor;x.shadowBlur=40;x.beginPath();x.arc(cx,base-alt*.55,larg*.42,0,7);x.fill();x.shadowBlur=0;x.fillStyle='#fff';x.textAlign='center';x.textBaseline='middle';
+    x.font=`800 ${Math.round(larg*.4)}px ${FC}`;x.fillText(nome.split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase(),cx,base-alt*.55+6);x.restore();return}
+  let s=alt/cv.height;if(cv.width*s>larg)s=larg/cv.width;const w=cv.width*s,h=cv.height*s;
+  x.save();x.translate(cx,base);if(espelho)x.scale(-1,1);
+  x.shadowColor=cor;x.shadowBlur=45;x.drawImage(cv,-w/2,-h,w,h);x.shadowBlur=18;x.drawImage(cv,-w/2,-h,w,h);x.restore()}
+function chapa(x0,y0,w,h,cor1,cor2,n1,n2,al){
+  const g=x.createLinearGradient(x0,0,x0+w,0);g.addColorStop(0,cor1);g.addColorStop(1,cor2);x.save();x.fillStyle=g;x.beginPath();
+  const sk=26;x.moveTo(x0+sk,y0);x.lineTo(x0+w,y0);x.lineTo(x0+w-sk,y0+h);x.lineTo(x0,y0+h);x.closePath();x.fill();
+  x.strokeStyle='rgba(255,255,255,.55)';x.lineWidth=3;x.stroke();x.fillStyle='#fff';x.textBaseline='alphabetic';x.textAlign='center';
+  x.shadowColor='rgba(0,0,0,.6)';x.shadowBlur=8;const cxm=x0+w/2;
+  fit(n1.toUpperCase(),w-70,62,800,1);x.fillText(n1.toUpperCase(),cxm,y0+h/2-6);fit(n2.toUpperCase(),w-70,62,800,1);x.fillText(n2.toUpperCase(),cxm,y0+h-18);x.restore()}
+(async()=>{
+  const S=await (await fetch('/api/estado')).json();const g=S.jogos.find(j=>j.id===id);
+  if(!g){document.getElementById('msg').textContent='Jogo não encontrado.';return}
+  try{await Promise.all(["italic 900 80px 'Barlow Condensed'","italic 800 60px 'Barlow Condensed'","800 40px 'Barlow Condensed'","700 30px 'Barlow'"].map(f=>document.fonts.load(f)));await document.fonts.load("800 40px 'Barlow Condensed'");await document.fonts.ready}catch(e){}
+  const nome=i=>(S.jogadores.find(p=>p.id===i)||{nome:'?'}).nome;
+  const cari=i=>{const f=(S.fotos||[]).find(z=>z.jogador===i);return f&&f.cari?carregar('/cari/'+i+'?v='+f.cari):Promise.resolve(null)};
+  const [logo,fundo,...im]=await Promise.all([S.cfg.logo?carregar('/logo?v='+S.cfg.logo):null,carregar('/cartaz-fundo.png'),cari(g.a1),cari(g.a2),cari(g.b1),cari(g.b2)]);
+  const rc=im.map(i=>i?recorte(i):null);
+  const gs=S.jogos.filter(j=>j.jornada===g.jornada&&j.criado_por===0).sort((a,b)=>a.id-b.id);const catJ=i=>((S.jogadores.find(p=>p.id===i)||{}).cat==='F'?'F':'M');const dv=g.divisao||(catJ(g.a1)+':');const ct=dv[0],nv=dv.split(':')[1]||'';const gsC=gs.filter(j=>(j.divisao||(catJ(j.a1)+':'))===dv);const grupo=gsC.findIndex(j=>j.id===g.id)+1;const NNk={masters:'MASTERS',pro:'PRO',sarrabeco:'SARRABECO'};
+  x.fillStyle='#05070d';x.fillRect(0,0,W,H);
+  if(fundo){const s=Math.max(W/fundo.width,H/fundo.height);x.drawImage(fundo,(W-fundo.width*s)/2,(H-fundo.height*s)/2,fundo.width*s,fundo.height*s)}
+  else{const gb=x.createLinearGradient(0,0,W,0);gb.addColorStop(0,'#0b2a8a');gb.addColorStop(.5,'#05070d');gb.addColorStop(1,'#8a0b14');x.fillStyle=gb;x.fillRect(0,0,W,H)}
+  let tg=x.createLinearGradient(0,0,0,300);tg.addColorStop(0,'rgba(0,0,0,.85)');tg.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=tg;x.fillRect(0,0,W,300);
+  tg=x.createLinearGradient(0,H-420,0,H);tg.addColorStop(0,'rgba(0,0,0,0)');tg.addColorStop(.45,'rgba(0,0,0,.75)');tg.addColorStop(1,'rgba(0,0,0,.95)');x.fillStyle=tg;x.fillRect(0,H-420,W,420);
+  let y=28;let lw=0;if(logo){const h=120,w=logo.width*h/logo.height;lw=w;x.drawImage(logo,(W-w)/2,y,w,h);y+=135}else y+=20;
+  if(g.quando){const dd=DS[new Date(g.quando.slice(0,10)+'T00:00:00Z').getUTCDay()]+' '+g.quando.slice(8,10)+'/'+g.quando.slice(5,7);const hh=g.quando.slice(11,16)+(g.campo?' · CAMPO '+g.campo:'');
+    const gx=Math.max(lw,120)/2+30;x.save();x.textBaseline='middle';x.fillStyle='#fff';x.shadowColor='rgba(216,232,74,.85)';x.shadowBlur=22;
+    x.textAlign='right';fit(dd,W/2-gx-30,58,900,1);x.fillText(dd,W/2-gx,88);x.textAlign='left';fit(hh,W/2-gx-30,58,900,1);x.fillText(hh,W/2+gx,88);x.restore();
+    if(!logo)y+=40}
+  x.textAlign='center';x.textBaseline='alphabetic';x.fillStyle='#d8e84a';x.font="700 30px 'Barlow',sans-serif";
+  x.fillText(((ct==='F'?'FEMININO · ':'')+(NNk[nv]?NNk[nv]+' · ':'')+'JORNADA '+g.jornada).toUpperCase(),W/2,y+28);
+  x.save();x.fillStyle='#fff';x.shadowColor='rgba(216,232,74,.7)';x.shadowBlur=24;const tt=grupo?'COMBATE '+grupo:'COMBATE';fit(tt,W-200,96,900,1);x.fillText(tt,W/2,y+120);x.restore();
+  const base=1035,alt=580,lg=290;
+  figura(rc[1],380,base-20,alt-40,lg,'rgba(40,120,255,.95)',false,nome(g.a2));figura(rc[0],175,base,alt,lg,'rgba(40,120,255,.95)',false,nome(g.a1));
+  figura(rc[3],700,base-20,alt-40,lg,'rgba(255,40,50,.95)',false,nome(g.b2));figura(rc[2],905,base,alt,lg,'rgba(255,40,50,.95)',false,nome(g.b1));
+  x.save();x.textAlign='center';x.textBaseline='middle';x.font=`italic 900 200px ${FC}`;x.lineJoin='round';
+  x.shadowColor='rgba(255,255,255,.9)';x.shadowBlur=40;x.lineWidth=16;x.strokeStyle='#0a1222';x.strokeText('VS',W/2,400);x.shadowBlur=0;
+  const vg=x.createLinearGradient(W/2-120,0,W/2+120,0);vg.addColorStop(0,'#5aa0ff');vg.addColorStop(.5,'#ffffff');vg.addColorStop(1,'#ff5a5a');x.fillStyle=vg;x.fillText('VS',W/2,400);
+  x.lineWidth=4;x.strokeStyle='#d8e84a';x.strokeText('VS',W/2,400);x.restore();
+  chapa(30,1035,505,140,'#0b3fbf','#1e7bff',nome(g.a1),nome(g.a2));chapa(545,1035,505,140,'#d01422','#ff4b3a',nome(g.b1),nome(g.b2));
+  const iv=(S.intervalos||[])[g.jornada-1];const dm=d=>d.slice(8,10)+'/'+d.slice(5,7);
+  const link=location.host+'/aposta/'+g.id;const QS=150,qx=W-40-QS,qy=1188;
+  if(window.qrcode){const qr=qrcode(0,'M');qr.addData(location.origin+'/aposta/'+g.id);qr.make();const n=qr.getModuleCount(),m=(QS-16)/n;
+    x.fillStyle='#fff';x.beginPath();x.roundRect?x.roundRect(qx,qy,QS,QS,12):x.rect(qx,qy,QS,QS);x.fill();x.fillStyle='#0a1222';
+    for(let r=0;r<n;r++)for(let k=0;k<n;k++)if(qr.isDark(r,k))x.fillRect(qx+8+k*m,qy+8+r*m,Math.ceil(m),Math.ceil(m))}
+  x.textAlign='left';x.fillStyle='#fff';const tx=50,tw=qx-tx-24;
+  const q=iv?'SEMANA DE '+dm(iv[0])+' A '+dm(iv[1]):'JORNADA '+g.jornada;fit(q,tw,54,800);x.fillText(q,tx,1236);
+  x.fillStyle='#b8c2d8';x.font="700 25px 'Barlow',sans-serif";x.fillText(g.quando?'JOGO MARCADO · VENHAM ASSISTIR':'COMBINEM O DIA E A HORA DO JOGO',tx,1274);
+  x.fillStyle='#d8e84a';fit('APOSTA NESTE COMBATE',tw,40,800,1);x.fillText('APOSTA NESTE COMBATE',tx,1316);
+  x.fillStyle='#fff';x.font="700 22px 'Barlow',sans-serif";x.fillText(link,tx,1340);x.textAlign='center';
+  const nomeF='cartaz-jornada'+g.jornada+'-jogo'+g.id+'.png';
+  document.getElementById('msg').textContent=im.some(i=>!i)?'Quem ainda não tem caricatura aparece com as iniciais.':'Pronto a partilhar.';
+  document.title='Cartaz pronto · Liga Dragon';
+  if(parent!==window){try{parent.postMessage({cartaz:id,k:location.search,img:c.toDataURL('image/jpeg',.85)},'*')}catch(_){}}
+  document.getElementById('desc').onclick=()=>{const a=document.createElement('a');a.download=nomeF;a.href=c.toDataURL('image/png');a.click()};
+  c.toBlob(b=>{const f=new File([b],nomeF,{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){const bt=document.getElementById('part');bt.hidden=false;bt.onclick=()=>navigator.share({files:[f],title:S.cfg.nome}).catch(()=>{})}},'image/png');
+})();
+</script></body></html>
