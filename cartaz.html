@@ -35,6 +35,13 @@ function recorte(img){const N=600,k=N/Math.max(img.width,img.height),w=Math.roun
   let x0=w,y0=h,x1=0,y1=0;for(let n=0;n<w*h;n++){if(p[n*4+3]>20){const cx=n%w,cy=(n/w)|0;if(cx<x0)x0=cx;if(cx>x1)x1=cx;if(cy<y0)y0=cy;if(cy>y1)y1=cy}}
   q.putImageData(d,0,0);if(x1<=x0)return null;const r=document.createElement('canvas');r.width=x1-x0+1;r.height=y1-y0+1;r.getContext('2d').drawImage(o,-x0,-y0);return r}
 function figura(cv,cx,base,alt,larg,cor,espelho,nome){
+  if(!cv&&nome==='??'){const hr=larg*.24,hy=base-alt*.62,sy=hy+hr*1.35;x.save();
+    const gr=x.createLinearGradient(0,hy-hr,0,base);gr.addColorStop(0,'#3a0d13');gr.addColorStop(1,'#07080d');x.fillStyle=gr;x.shadowColor=cor;x.shadowBlur=50;
+    x.beginPath();x.moveTo(cx-hr*.42,hy+hr*.7);x.lineTo(cx-hr*.48,sy-hr*.1);x.bezierCurveTo(cx-larg*.30,sy-hr*.05,cx-larg*.47,sy+hr*.2,cx-larg*.48,sy+hr*.9);x.lineTo(cx-larg*.5,base);x.lineTo(cx+larg*.5,base);x.lineTo(cx+larg*.48,sy+hr*.9);x.bezierCurveTo(cx+larg*.47,sy+hr*.2,cx+larg*.30,sy-hr*.05,cx+hr*.48,sy-hr*.1);x.lineTo(cx+hr*.42,hy+hr*.7);x.closePath();x.fill();
+    x.beginPath();x.ellipse(cx,hy,hr*.86,hr,0,0,7);x.fill();
+    x.shadowBlur=0;x.lineWidth=4;x.strokeStyle='rgba(255,90,90,.8)';x.beginPath();x.ellipse(cx,hy,hr*.86,hr,0,0,7);x.stroke();
+    x.beginPath();x.moveTo(cx-larg*.5,base);x.lineTo(cx-larg*.48,sy+hr*.9);x.bezierCurveTo(cx-larg*.47,sy+hr*.2,cx-larg*.30,sy-hr*.05,cx-hr*.48,sy-hr*.1);x.moveTo(cx+larg*.5,base);x.lineTo(cx+larg*.48,sy+hr*.9);x.bezierCurveTo(cx+larg*.47,sy+hr*.2,cx+larg*.30,sy-hr*.05,cx+hr*.48,sy-hr*.1);x.stroke();
+    x.textAlign='center';x.textBaseline='middle';x.font=`italic 900 ${Math.round(hr*1.45)}px ${FC}`;x.fillStyle='#ffd23f';x.shadowColor='rgba(255,210,63,.9)';x.shadowBlur=28;x.fillText('?',cx,hy+6);x.restore();return}
   if(!cv){x.save();x.fillStyle=cor;x.shadowColor=cor;x.shadowBlur=40;x.beginPath();x.arc(cx,base-alt*.55,larg*.42,0,7);x.fill();x.shadowBlur=0;x.fillStyle='#fff';x.textAlign='center';x.textBaseline='middle';
     x.font=`800 ${Math.round(larg*.4)}px ${FC}`;x.fillText(nome.split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase(),cx,base-alt*.55+6);x.restore();return}
   let s=alt/cv.height;if(cv.width*s>larg)s=larg/cv.width;const w=cv.width*s,h=cv.height*s;
